@@ -43,7 +43,7 @@ struct Contract {
     uint32_t employee_id;
 };
 
-TEST_CASE("compose results with final error")
+TEST_CASE("compose results with second error")
 {
     using namespace result;
     Result<Employee> db_employee = Employee{ 2343423, "Joan", 44 };
@@ -55,6 +55,40 @@ TEST_CASE("compose results with final error")
     bool is_correct = std::visit(overload{
         [](Contract)       { return false; },
         [&error_message](Error& error)   { return error.message == error_message; },
+    }, contract_from_employee);
+    REQUIRE(is_correct);
+}
+
+
+TEST_CASE("compose results with first error")
+{
+    using namespace result;
+    std::string error_message = std::string("Employee not found");
+    Result<Employee> db_employee = Error{ error_message };
+    Result<Contract> db_contract = Contract{ 623523, "This contract...", 4523454 };
+    std::function<Result<Contract>(Employee)> find_contract_by_employee_id = [&db_contract](Employee) { return db_contract; };
+    Result<Contract> contract_from_employee = bind(db_employee, find_contract_by_employee_id);
+
+    bool is_correct = std::visit(overload{
+        [](Contract)       { return false; },
+        [&error_message](Error& error)   { return error.message == error_message; },
+    }, contract_from_employee);
+    REQUIRE(is_correct);
+}
+
+
+TEST_CASE("compose results with success")
+{
+    using namespace result;
+    uint32_t employee_id = 2343423;
+    Result<Employee> db_employee = Employee{ employee_id, "Joan", 44 };
+    Result<Contract> db_contract = Contract{ 623523, "This contract...", employee_id };
+    std::function<Result<Contract>(Employee)> find_contract_by_employee_id = [&db_contract](Employee) { return db_contract; };
+    Result<Contract> contract_from_employee = bind(db_employee, find_contract_by_employee_id);
+
+    bool is_correct = std::visit(overload{
+        [&employee_id](Contract& contract)       { return contract.employee_id == employee_id; },
+        [](Error&)   { return false; },
     }, contract_from_employee);
     REQUIRE(is_correct);
 }
