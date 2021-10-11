@@ -88,6 +88,36 @@ TEST_CASE("compose results with second error")
     REQUIRE(is_correct);
 }
 
+TEST_CASE("map from correct result")
+{
+    using namespace result;
+    std::string name("Joan");
+    std::string error_message = std::string("Database server not reacheable");
+    Result<Employee> db_employee = Error{ error_message };
+    std::function<std::string(Employee)> get_name = [](Employee employee) { return employee.name; };
+    Result<std::string> name_of_employee = map(db_employee, get_name);
+
+    bool is_correct = std::visit(overload{
+        [](std::string)       { return false; },
+        [&error_message](Error& error)   { return error.message == error_message; },
+    }, name_of_employee);
+    REQUIRE(is_correct);
+}
+
+TEST_CASE("map from error")
+{
+    using namespace result;
+    std::string name("Joan");
+    Result<Employee> db_employee = Employee{ 2343423, name, 44 };
+    std::function<std::string(Employee)> get_name = [](Employee employee) { return employee.name; };
+    Result<std::string> name_of_employee = map(db_employee, get_name);
+
+    bool is_correct = std::visit(overload{
+        [&name](std::string name_result)       { return name_result == name; },
+        [](Error)   { return false; },
+    }, name_of_employee);
+    REQUIRE(is_correct);
+}
 
 TEST_CASE("unsuccessful unsafe error")
 {
@@ -108,8 +138,7 @@ TEST_CASE("unsuccessful unsafe error")
     REQUIRE(is_correct);
 }
 
-
-TEST_CASE("successful unsafe error")
+TEST_CASE("successful unsafe correct result")
 {
     using namespace result;
     std::function<uint8_t()> get_age_unsafe_and_successful = []() { return 32; };

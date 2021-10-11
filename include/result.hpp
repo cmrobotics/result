@@ -12,7 +12,8 @@ template<class... Ts> overload(Ts...) -> overload<Ts...>;
 
 struct Error;
 struct None {};
-using OptionalError = std::variant<None, std::shared_ptr<Error>>;
+// std::shared_ptr used to make recursive types variant-compatible
+using OptionalError = std::variant<None, std::shared_ptr<Error>>; 
 struct Error { 
     std::string message; 
     OptionalError optional_parent_error = None{};

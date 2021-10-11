@@ -23,5 +23,13 @@ auto bind(Result<from_type>& result, std::function<Result<to_type>(from_type)>& 
     }, result);
 }
 
+template<typename from_type, typename to_type>
+auto map(Result<from_type>& result, std::function<to_type(from_type)>& safe_function) -> Result<to_type>{
+    std::function<Result<to_type>(from_type)> functor_equivalent = [&safe_function](from_type data) { 
+        return static_cast<Result<to_type>>(safe_function(data)); 
+    };
+    return bind(result, functor_equivalent);
+}
+
 } // namespace result
 #endif
