@@ -1,4 +1,4 @@
-`Result` is a header-only library for safe, correct and complete error handling in C++ 
+`Result` is a header-only minimalistic library for safe, correct and complete error handling in C++ 
 
 This library guarantees the following properties:
 - If a function can generate an error, when it is called there should be a compile-time guarantee that the error is checked.
