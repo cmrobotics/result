@@ -4,7 +4,7 @@
 namespace result {
 
 template<typename from_type, typename to_type>
-auto bind(Result<from_type>& result, const std::function<Result<to_type>(from_type)>& safe_function) -> Result<to_type>{
+auto bind(Result<from_type>& result, std::function<Result<to_type>(from_type)>& safe_function) -> Result<to_type>{
     return std::visit(overload{
         [&safe_function](from_type& data) {
             Result<to_type> mapped_data = safe_function(data);
