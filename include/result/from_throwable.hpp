@@ -6,7 +6,7 @@
 namespace result {
 
 template<typename to_type> 
-auto from_throwable(const std::function<to_type()>&  unsafe_function) -> Result<to_type>{
+auto from_throwable(std::function<to_type()>&  unsafe_function) -> Result<to_type>{
     try {
         return unsafe_function();
     }
