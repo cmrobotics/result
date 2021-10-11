@@ -24,7 +24,7 @@ git remote add origin $url
 git push -u origin hpp-skel-port
 
 # Perhaps useful for fresh start
-# rm -rf include/hello_world
-# rm -rf include/hello_world.hpp
+# rm -rf include/RESULT
+# rm -rf include/RESULT.hpp
 # cp /dev/null CHANGELOG.md
 # cp /dev/null README.md
