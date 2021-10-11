@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
-project(hpp_skel LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 11)
+project(result LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -17,7 +17,6 @@ else()
     message("-- Configuring release build")
 endif()
 
-# Enable extra warnings to adhere to https://github.com/mapbox/cpp/issues/37
 set(DESIRED_WARNINGS "-Wall -Wextra -Wconversion -Wunreachable-code -Wuninitialized -pedantic-errors -Wold-style-cast -Wno-error=unused-variable -Wshadow -Wfloat-equal -Weffc++")
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   set(DESIRED_WARNINGS "${DESIRED_WARNINGS} -Wmost")
@@ -42,11 +41,3 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 
 file(GLOB TEST_SOURCES test/*.cpp)
 add_executable(unit-tests ${TEST_SOURCES})
-
-# libbenchmark.a supports threads and therefore needs pthread support
-find_package(Threads REQUIRED)
-file(GLOB BENCH_SOURCES bench/*.cpp)
-add_executable(bench-tests ${BENCH_SOURCES})
-
-# link benchmark static library to the bench-tests binary so the bench tests know where to find the benchmark impl code
-target_link_libraries(bench-tests ${MASON_PACKAGE_benchmark_STATIC_LIBS} ${CMAKE_THREAD_LIBS_INIT})
