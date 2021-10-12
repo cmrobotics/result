@@ -122,7 +122,8 @@ TEST_CASE("map from error")
 TEST_CASE("chain error")
 {
     using namespace result;
-    Result<Employee> db_employee = Error{ "Database server not reacheable" };
+    Error parent_error { "Database server not reacheable" };
+    Result<Employee> db_employee = parent_error;
     std::function<std::string(Employee)> get_name = [](Employee employee) { return employee.name; };
     Result<std::string> name_of_employee = map(db_employee, get_name);
     std::string error_message = std::string("Employee can't be found due to technical problems. Contact your system administrator");
@@ -130,7 +131,12 @@ TEST_CASE("chain error")
 
     bool is_correct = std::visit(overload{
         [](std::string)       { return false; },
-        [&error_message](Error& error)   { return error.message == error_message; },
+        [&parent_error, &error_message](Error& error)   {
+            return error.message == error_message && std::visit(overload{
+                [](None&)       { return false; },
+                [&parent_error](std::shared_ptr<Error>& inner_error) { return inner_error->message == parent_error.message; },
+            }, error.optional_parent_error);
+        },
     }, name_of_employee_processed);
     REQUIRE(is_correct);
 }
