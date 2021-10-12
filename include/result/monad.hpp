@@ -9,11 +9,11 @@ auto bind(Result<from_type>& result, std::function<Result<to_type>(from_type)>& 
         [&safe_function](from_type& data) {
             Result<to_type> mapped_data = safe_function(data);
             return std::visit(overload{
-                [](to_type& data) {
-                    return static_cast<Result<to_type>>(data);
+                [](to_type& inner_data) {
+                    return static_cast<Result<to_type>>(inner_data);
                 },
-                [](Error& error)    { 
-                    return static_cast<Result<to_type>>(error);
+                [](Error& inner_error)    { 
+                    return static_cast<Result<to_type>>(inner_error);
                 },
             }, mapped_data);
         },
