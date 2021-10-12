@@ -123,14 +123,14 @@ TEST_CASE("unsuccessful unsafe error")
 {
     using namespace result;
     std::string error_message = "Not possible to open database connection";
-    auto error = std::runtime_error(error_message);
-    std::function<uint8_t()> get_age_unsafe_and_successful = [&error]() {
-        throw error;
+    auto expected_error = std::runtime_error(error_message);
+    std::function<uint8_t()> get_age_unsafe_and_successful = [&expected_error]() {
+        throw expected_error;
         // this line will never be executed
         return 32;
     };
     Result<uint8_t> age_result = from_throwable<uint8_t>(get_age_unsafe_and_successful);
- 
+
     bool is_correct = std::visit(overload{
         [](uint8_t&)       { return false; },
         [&error_message](Error& error)   { return error.message == error_message; },
@@ -143,7 +143,7 @@ TEST_CASE("successful unsafe correct result")
     using namespace result;
     std::function<uint8_t()> get_age_unsafe_and_successful = []() { return 32; };
     Result<uint8_t> age_result = from_throwable<uint8_t>(get_age_unsafe_and_successful);
- 
+
     bool is_correct = std::visit(overload{
         [](uint8_t& age)       { return age == 32; },
         [](Error&)   { return false; },

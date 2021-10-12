@@ -1,0 +1,6 @@
+# cmake/resultConfig.cmake.in
+@PACKAGE_INIT@
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
+#set_and_check(result_INCLUDE_DIRS /home/ros/semantic-mapping/install/result/include/)
+set_and_check(result_INCLUDE_DIRS "${result_CMAKE_INSTALL_INCLUDEDIR}")
+check_required_components("@PROJECT_NAME@")
