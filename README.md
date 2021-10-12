@@ -13,7 +13,14 @@ to transform safely the `Result<T>` types without doing any manual error checkin
 
 ## Add library to your project
 
-Add directly the library in the included directories
+### CMake Projects
+
+First add to `CMakeLists.txt` the following `find_package` entry:
+```
+find_package(result CONFIG REQUIRED)
+```
+
+Finally, add to `CMakeLists.txt` the library in the included directories:
 ```
 include_directories(include
   # Other include dirs go here
@@ -21,13 +28,21 @@ include_directories(include
 )
 ```
 
-In case it's a ROS2 project, also add the dependency in `package.xml`:
+### ROS2 Projects
+First follow the previous section for `CMake Projects` to get the `CMakeLists.txt` ready.
+
+The next step is adding the dependency in `package.xml`:
 ```xml
-<build_depend>result</build_depend>
+<build>result</build>
+```
+
+Clone the result repository in your workspace `/src` folder
+```bash
+cd $WORKSPACE/src && git clone https://github.com/cmrobotics/result.git
 ```
 
 Finally, add the include in your C++ sources:
-```
+```c++
 #include <result.hpp>
 ```
 
