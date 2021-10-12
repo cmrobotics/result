@@ -18,10 +18,10 @@ auto from_throwable(std::function<to_type()>&  unsafe_function) -> Result<to_typ
         return static_cast<Result<to_type>>(Error{ e });
     }
     catch (const char           *e) { 
-        return static_cast<Result<to_type>>(Error{ std::string(e) }); 
+        return static_cast<Result<to_type>>(Error{ e }); 
     }
     catch (...) { 
-        return static_cast<Result<to_type>>(Error{ std::string("Unknown Exception") }); 
+        return static_cast<Result<to_type>>(Error{ "Unknown Exception" }); 
     }
 }
 
