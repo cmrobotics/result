@@ -1,5 +1,5 @@
 # cmake/resultConfig.cmake.in
 @PACKAGE_INIT@
 include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@Targets.cmake")
-set_and_check(result_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@")
+set_and_check(result_INCLUDE_DIRS "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_INCLUDEDIR@/include")
 check_required_components("@PROJECT_NAME@")
