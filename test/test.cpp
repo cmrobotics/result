@@ -119,6 +119,22 @@ TEST_CASE("map from error")
     REQUIRE(is_correct);
 }
 
+TEST_CASE("chain error")
+{
+    using namespace result;
+    Result<Employee> db_employee = Error{ "Database server not reacheable" };
+    std::function<std::string(Employee)> get_name = [](Employee employee) { return employee.name; };
+    Result<std::string> name_of_employee = map(db_employee, get_name);
+    std::string error_message = std::string("Employee can't be found due to technical problems. Contact your system administrator");
+    Result<std::string> name_of_employee_processed = chain_if_error(name_of_employee, error_message);
+
+    bool is_correct = std::visit(overload{
+        [](std::string)       { return false; },
+        [&error_message](Error& error)   { return error.message == error_message; },
+    }, name_of_employee_processed);
+    REQUIRE(is_correct);
+}
+
 TEST_CASE("unsuccessful unsafe error")
 {
     using namespace result;

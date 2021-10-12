@@ -1,5 +1,5 @@
-#ifndef RESULT_BIND_HPP
-#define RESULT_BIND_HPP
+#ifndef RESULT_MONAD_HPP
+#define RESULT_MONAD_HPP
 
 namespace result {
 
@@ -12,12 +12,12 @@ auto bind(Result<from_type>& result, std::function<Result<to_type>(from_type)>& 
                 [](to_type& inner_data) {
                     return static_cast<Result<to_type>>(inner_data);
                 },
-                [](Error& inner_error)    { 
+                [](Error& inner_error)    {
                     return static_cast<Result<to_type>>(inner_error);
                 },
             }, mapped_data);
         },
-        [](Error& error)    { 
+        [](Error& error)    {
             return static_cast<Result<to_type>>(error);
         },
     }, result);
@@ -25,8 +25,8 @@ auto bind(Result<from_type>& result, std::function<Result<to_type>(from_type)>& 
 
 template<typename from_type, typename to_type>
 auto map(Result<from_type>& result, std::function<to_type(from_type)>& safe_function) -> Result<to_type>{
-    std::function<Result<to_type>(from_type)> functor_equivalent = [&safe_function](from_type data) { 
-        return static_cast<Result<to_type>>(safe_function(data)); 
+    std::function<Result<to_type>(from_type)> functor_equivalent = [&safe_function](from_type data) {
+        return static_cast<Result<to_type>>(safe_function(data));
     };
     return bind(result, functor_equivalent);
 }

@@ -13,9 +13,9 @@ template<class... Ts> overload(Ts...) -> overload<Ts...>;
 struct Error;
 struct None {};
 // std::shared_ptr used to make recursive types variant-compatible
-using OptionalError = std::variant<None, std::shared_ptr<Error>>; 
-struct Error { 
-    std::string message; 
+using OptionalError = std::variant<None, std::shared_ptr<Error>>;
+struct Error {
+    std::string message;
     OptionalError optional_parent_error = None{};
 };
 
@@ -26,6 +26,7 @@ using Result = std::variant<result_type, Error>;
 
 #include "result/monad.hpp"
 #include "result/from_throwable.hpp"
+#include "result/chain_if_error.hpp"
 #include "result/version.hpp"
 
 #endif
