@@ -24,7 +24,7 @@ using Result = std::variant<result_type, Error>;
 
 } // namespace result
 
-#include "result/bind.hpp"
+#include "result/monad.hpp"
 #include "result/from_throwable.hpp"
 #include "result/version.hpp"
 
