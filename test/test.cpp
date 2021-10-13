@@ -141,7 +141,25 @@ TEST_CASE("chain error")
     REQUIRE(is_correct);
 }
 
-TEST_CASE("unsuccessful unsafe error")
+TEST_CASE("chain error from correct result")
+{
+    using namespace result;
+    std::string name("Joan");
+    Error parent_error { "Database server not reacheable" };
+    Result<Employee> db_employee = Employee{ 2343423, name, 44 };
+    std::function<std::string(Employee)> get_name = [](Employee employee) { return employee.name; };
+    Result<std::string> name_of_employee = map(db_employee, get_name);
+    std::string error_message = std::string("Employee can't be found due to technical problems. Contact your system administrator");
+    Result<std::string> name_of_employee_processed = chain_if_error(name_of_employee, error_message);
+
+    bool is_correct = std::visit(overload{
+        [&name](std::string& retrieved_name)       { return retrieved_name == name ; },
+        [&](Error&)   { return false; },
+    }, name_of_employee_processed);
+    REQUIRE(is_correct);
+}
+
+TEST_CASE("unsuccessful unsafe error using std::exception")
 {
     using namespace result;
     std::string error_message = "Not possible to open database connection";
@@ -156,6 +174,60 @@ TEST_CASE("unsuccessful unsafe error")
     bool is_correct = std::visit(overload{
         [](uint8_t&)       { return false; },
         [&error_message](Error& error)   { return error.message == error_message; },
+    }, age_result);
+    REQUIRE(is_correct);
+}
+
+TEST_CASE("unsuccessful unsafe error using std::string")
+{
+    using namespace result;
+    std::string error_message = "Not possible to open database connection";
+    std::function<uint8_t()> get_age_unsafe_and_successful = [&error_message]() {
+        throw error_message;
+        // this line will never be executed
+        return 32;
+    };
+    Result<uint8_t> age_result = from_throwable<uint8_t>(get_age_unsafe_and_successful);
+
+    bool is_correct = std::visit(overload{
+        [](uint8_t&)       { return false; },
+        [&error_message](Error& error)   { return error.message == error_message; },
+    }, age_result);
+    REQUIRE(is_correct);
+}
+
+TEST_CASE("unsuccessful unsafe error using char*")
+{
+    using namespace result;
+    std::string error_message = "Not possible to open database connection";
+    std::function<uint8_t()> get_age_unsafe_and_successful = [&error_message]() {
+        throw error_message.c_str();
+        // this line will never be executed
+        return 32;
+    };
+    Result<uint8_t> age_result = from_throwable<uint8_t>(get_age_unsafe_and_successful);
+
+    bool is_correct = std::visit(overload{
+        [](uint8_t&)       { return false; },
+        [&error_message](Error& error)   { return error.message == error_message; },
+    }, age_result);
+    REQUIRE(is_correct);
+}
+
+TEST_CASE("unsuccessful unsafe error using any type")
+{
+    using namespace result;
+    uint16_t error_code = 57;
+    std::function<uint8_t()> get_age_unsafe_and_successful = [&error_code]() {
+        throw error_code;
+        // this line will never be executed
+        return 32;
+    };
+    Result<uint8_t> age_result = from_throwable<uint8_t>(get_age_unsafe_and_successful);
+
+    bool is_correct = std::visit(overload{
+        [](uint8_t&)       { return false; },
+        [](Error& error)   { return error.message == std::string("Unknown Exception"); },
     }, age_result);
     REQUIRE(is_correct);
 }
