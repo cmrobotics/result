@@ -13,6 +13,32 @@ The library adds a [bind](include/result/monad.hpp) method to compose results. A
 - Errors shall be chainable, allowing the creation of a stack of errors with different levels of abstraction. There is also a mechanism to chain errors without manually checking for them using [chain_if_error](include/result/chain_if_error.hpp).
 - 100% covered by unit tests
 
+## Usage
+
+For usage see [unit tests](test/test.cpp).
+
+We wrote unit tests so that they serve for a repository of examples as well as for functionality validation.
+
+## Commands
+
+### Build
+
+```shell
+make release
+```
+
+### Test
+
+```shell
+make release && make test
+```
+
+### Coverage
+
+```shell
+make release && make test && make coverage
+```
+
 ## Add library to your project
 
 ### CMake Projects
@@ -46,30 +72,4 @@ cd $WORKSPACE/src && git clone https://github.com/cmrobotics/result.git
 Finally, add the include in your C++ sources:
 ```c++
 #include <result.hpp>
-```
-
-## Usage
-
-For usage see [unit tests](test/test.cpp).
-
-We wrote unit tests so that they serve for a repository of examples as well as for functionality validation.
-
-## Commands
-
-### Build
-
-```shell
-make release
-```
-
-### Test
-
-```shell
-make release && make test
-```
-
-### Coverage
-
-```shell
-make release && make test && make coverage
 ```
