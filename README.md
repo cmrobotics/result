@@ -13,7 +13,7 @@ The library adds a [bind](include/result/monad.hpp) method to compose results. A
 to transform safely the `Result<T>` types without doing any manual error checking either.
 - Errors shall be chainable, creating something analogous to a stack-trace of errors. There is also a a mechanism to chain errors without manually
 checking for them using [chain_if_error](include/result/chain_if_error.hpp).
-- Library shall be 100% covered by unit tests
+- 100% covered by unit tests
 
 ## Add library to your project
 
