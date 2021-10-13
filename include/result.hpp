@@ -14,6 +14,7 @@ struct Error;
 struct None {};
 // std::shared_ptr used to make recursive types variant-compatible
 // All Error have non-null `optional_parent_error` or None type
+// There will **never** be a nullptr `std::shared_ptr<Error>`
 using OptionalError = std::variant<None, std::shared_ptr<Error>>;
 struct Error {
     std::string message;
