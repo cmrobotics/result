@@ -8,7 +8,7 @@ cannot be retrieved without checking if there is an error.
 - Errors shall not create side-effects, and shall preserve safety and determinism.
 This implies [throwing exceptions](https://en.cppreference.com/w/cpp/language/throw) are not allowed as mechanism. The library supports an easy integration for [functions that can throw exceptions](include/result/from_throwable.hpp).
 - Errors and correct results shall be mutually exclusive. This implies using union types and therefore C++ [variant](https://en.cppreference.com/w/cpp/utility/variant). The type used to represent a result that might have an error is `Result<T>` where `T` is the type of the correct result.
-- Results shall be monadic-composible. This implies that two `Result<T>` should be safely directly composable without any need for manual error checking.
+- `Result<T>` objects shall be monadic-composible. This implies that two `Result<T>` should be safely directly composable without any need for manual error checking.
 The library adds a [bind](include/result/monad.hpp) method to compose results. As it's a monad, a functor [map](include/result/monad.hpp) method is also added to transform safely the `Result<T>` types without doing any manual error checking either.
 - Errors shall be chainable, allowing the creation of a stack of errors with different levels of abstraction. There is also a mechanism to chain errors without manually checking for them using [chain_if_error](include/result/chain_if_error.hpp).
 - 100% covered by unit tests
