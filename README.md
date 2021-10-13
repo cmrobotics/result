@@ -11,8 +11,7 @@ This implies exceptions are not allowed as mechanism. The library supports an ea
 - Results shall be monadic-composible. This implies that two `Result<T>` should be safely directly composable without any need for manual error checking.
 The library adds a [bind](include/result/monad.hpp) method to compose results. As it's a monad, a functor [map](include/result/monad.hpp) method is also added
 to transform safely the `Result<T>` types without doing any manual error checking either.
-- Errors shall be chainable, creating something analogous to a stack-trace of errors. There is also a a mechanism to chain errors without manually
-checking for them using [chain_if_error](include/result/chain_if_error.hpp).
+- Errors shall be chainable, allowing the creation of a stack of errors with different levels of abstraction. There is also a mechanism to chain errors without manually checking for them using [chain_if_error](include/result/chain_if_error.hpp).
 - 100% covered by unit tests
 
 ## Add library to your project
