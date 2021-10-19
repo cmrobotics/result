@@ -35,8 +35,16 @@ endif()
 mason_use(catch VERSION 2.12.1 HEADER_ONLY)
 include_directories(SYSTEM ${MASON_PACKAGE_catch_INCLUDE_DIRS})
 
-mason_use(benchmark VERSION 1.4.1)
-include_directories(SYSTEM ${MASON_PACKAGE_benchmark_INCLUDE_DIRS})
+execute_process(
+    COMMAND uname -m 
+    OUTPUT_VARIABLE UNAME_M
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+if (UNAME_M STREQUAL "x86_64")
+  mason_use(benchmark VERSION 1.4.1)
+  include_directories(SYSTEM ${MASON_PACKAGE_benchmark_INCLUDE_DIRS})
+endif()
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
 
