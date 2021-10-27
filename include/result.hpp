@@ -24,6 +24,9 @@ struct Error {
 template<typename result_type>
 using Result = std::variant<result_type, Error>;
 
+template<typename result_type, typename error_type>
+using GenericResult = std::variant<result_type, error_type>;
+
 } // namespace result
 
 #include "result/monad.hpp"
