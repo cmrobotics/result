@@ -43,25 +43,5 @@ auto map_error(GenericResult<from_type, error_type>& result, std::function<to_er
     return bind_error(result, functor_equivalent);
 }
 
-template<typename from_type, typename to_type>
-auto bind(Result<from_type>& result, std::function<Result<to_type>(from_type)>& safe_function) -> Result<to_type>{
-    return std::visit(overload{
-        [&safe_function](from_type& data) {
-            return static_cast<Result<to_type>>(safe_function(data));
-        },
-        [](Error& error)    {
-            return static_cast<Result<to_type>>(error);
-        },
-    }, result);
-}
-
-template<typename from_type, typename to_type>
-auto map(Result<from_type>& result, std::function<to_type(from_type)>& safe_function) -> Result<to_type>{
-    std::function<Result<to_type>(from_type)> functor_equivalent = [&safe_function](from_type data) {
-        return static_cast<Result<to_type>>(safe_function(data));
-    };
-    return bind(result, functor_equivalent);
-}
-
 } // namespace result
 #endif
