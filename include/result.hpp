@@ -21,8 +21,12 @@ struct Error {
     OptionalError optional_parent_error = None{};
 };
 
+
+template<typename result_type, typename error_type>
+using GenericResult = std::variant<result_type, error_type>;
+
 template<typename result_type>
-using Result = std::variant<result_type, Error>;
+using Result = GenericResult<result_type, Error>;
 
 } // namespace result
 

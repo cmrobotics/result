@@ -245,3 +245,101 @@ TEST_CASE("successful unsafe correct result")
     REQUIRE(is_correct);
 }
 
+
+TEST_CASE("correct generic result")
+{
+    using namespace result;
+    GenericResult<uint8_t, std::string> age_result = 32;
+    bool is_correct = std::visit(overload{
+        [](uint8_t& age)       { return age == 32; },
+        [](std::string&)   { return false; },
+    }, age_result);
+    REQUIRE(is_correct);
+}
+
+
+
+TEST_CASE("incorrect generic result")
+{
+    using namespace result;
+    std::string error_message = std::string("this is an error");
+    GenericResult<uint8_t, std::string> error_result = error_message;
+    bool is_correct = std::visit(overload{
+        [](uint8_t&)       { return false; },
+        [&error_message](std::string& error)   { return  error == error_message; },
+    }, error_result);
+    REQUIRE(is_correct);
+}
+
+TEST_CASE("correct generic result map")
+{
+    using namespace result;
+    using ErrorMessage = std::string;
+    struct Age {
+        uint8_t value;
+    };
+    GenericResult<uint8_t, ErrorMessage> age_result = 32;
+    std::function<Age(uint8_t)> safe_function = [](uint8_t age) { return Age{age}; };
+    GenericResult<Age, ErrorMessage> age_string_result = map(age_result, safe_function);
+    bool is_correct = std::visit(overload{
+        [](Age& age)       { return age.value == 32; },
+        [](ErrorMessage&)   { return false; },
+    }, age_string_result);
+    REQUIRE(is_correct);
+}
+
+TEST_CASE("generic result bind when error")
+{
+    using namespace result;
+    using ErrorMessage = std::string;
+    struct Age {
+        uint8_t value;
+    };
+    std::string error_message = "this is an error";
+    GenericResult<uint8_t, ErrorMessage> age_result = error_message;
+    std::function<GenericResult<Age, ErrorMessage>(uint8_t)> safe_function = \
+        [](uint8_t age) { return static_cast<GenericResult<Age, ErrorMessage>>(Age{age}); };
+    GenericResult<Age, ErrorMessage> age_string_result = bind(age_result, safe_function);
+    bool is_correct = std::visit(overload{
+        [](Age&)       { return false; },
+        [&error_message](ErrorMessage& error)   { return error == error_message; },
+    }, age_string_result);
+    REQUIRE(is_correct);
+}
+
+TEST_CASE("incorrect generic result map_error")
+{
+    using namespace result;
+    using ErrorMessage = std::string;
+    struct MyError {
+        std::string message;
+    };
+    std::string error_message = "this is an error";
+    GenericResult<uint8_t, ErrorMessage> age_result = error_message;
+    std::function<MyError(ErrorMessage)> safe_function = [](ErrorMessage message) { return MyError{message}; };
+    GenericResult<uint8_t, MyError> age_result_error = map_error(age_result, safe_function);
+    bool is_correct = std::visit(overload{
+        [](uint8_t&)       { return false; },
+        [&error_message](MyError& my_error)   { return my_error.message == error_message; },
+    }, age_result_error);
+    REQUIRE(is_correct);
+}
+
+TEST_CASE("generic result bind_error when successful")
+{
+    using namespace result;
+    using ErrorMessage = std::string;
+    struct MyError {
+        std::string message;
+    };
+    std::string error_message = "this is an error";
+    GenericResult<uint8_t, ErrorMessage> age_result = 32;
+    std::function<GenericResult<uint8_t, MyError>(ErrorMessage)> safe_function = [](ErrorMessage message) { \
+        return static_cast<GenericResult<uint8_t, MyError>>(MyError{message}); };
+    GenericResult<uint8_t, MyError> age_result_error = bind_error(age_result, safe_function);
+    bool is_correct = std::visit(overload{
+        [](uint8_t& age)       { return age == 32; },
+        [&](MyError&)   { return false; },
+    }, age_result_error);
+    REQUIRE(is_correct);
+}
